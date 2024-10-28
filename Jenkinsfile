@@ -48,7 +48,9 @@ pipeline {
             }
         }
     }
-
+            }
+        }
+    }
     post {
         always {
             script {
