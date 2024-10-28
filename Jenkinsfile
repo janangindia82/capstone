@@ -11,12 +11,15 @@ pipeline {
     stages {
         stage('Setup Minikube Docker Environment') {
             steps {
-                powershell '''
-                # setup Minikube Docker environment
-                & minikube docker-env --shell powershell | Invoke-Expression
-                '''
-                
-        }
+                script {
+                    def dockerEnv = sh(script: 'minikube docker-env', returnStdout: true)
+                    def envVars = dockerEnv.split('\n')
+                    envVars.each { var ->
+                        if (var.startsWith('export')) {
+                            def keyValue = var.split('=')
+                            env[keyValue[0].replace('export ', '').trim()] = keyValue[1].trim()
+                        }
+            }
 
         stage('Build Docker Image') {
             steps {
