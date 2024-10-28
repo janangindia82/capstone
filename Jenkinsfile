@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        KUBECONFIG = "C:\\Users\\janap\\.kube\\config"
         DOCKER_IMAGE = "node-app"
         MYSQL_YAML = "mysql-deployment.yml"
         APP_YAML = "app-deployment.yml"
