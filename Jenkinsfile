@@ -12,7 +12,7 @@ pipeline {
             steps {
                 script {
                     // Set up the Minikube Docker environment
-                    sh 'eval $(minikube docker-env)' // Using single quotes avoids interpolation issues
+                    sh "minikube docker-env --shell powershell | Invoke-Expression"
                 }
             }
         }
@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image for the Node.js app
-                    sh "eval \$(minikube docker-env) && docker build -t ${DOCKER_IMAGE}:latest ."
+                    sh "docker build -t ${DOCKER_IMAGE}:latest ."
                 }
             }
         }
