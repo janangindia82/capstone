@@ -12,11 +12,8 @@ pipeline {
         stage('Setup Minikube Docker Environment') {
             steps {
                 script {
-                  // Set Minikube Docker environment using PowerShell
-                    powershell '''
-                    $env:DOCKER_ENV = & minikube docker-env --shell powershell
-                    Invoke-Expression $env:DOCKER_ENV
-                    '''
+                    // Set up the Minikube Docker environment
+                    sh "minikube docker-env --shell powershell | Invoke-Expression"
                 }
             }
         }
@@ -24,11 +21,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                   // Build the Docker image
-                    powershell '''
-                    Invoke-Expression & minikube docker-env
-                    docker build -t ${DOCKER_IMAGE}:latest .
-                    '''
+                    // Build the Docker image for the Node.js app
+                    sh "docker build -t ${DOCKER_IMAGE}:latest ."
                 }
             }
         }
@@ -36,10 +30,8 @@ pipeline {
         stage('Deploy MySQL on Minikube') {
             steps {
                 script {
-                     // Apply MySQL deployment configuration
-                    powershell '''
-                    kubectl apply -f ${MYSQL_YAML}
-                    '''
+                    // Apply MySQL deployment configuration
+                    sh "kubectl apply -f ${MYSQL_YAML}"
                 }
             }
         }
@@ -47,10 +39,9 @@ pipeline {
         stage('Deploy Node.js App on Minikube') {
             steps {
                 script {
-                    // Apply Node.js deployment configuration
-                    powershell '''
-                    kubectl apply -f ${APP_YAML}
-                    '''
+                    // Apply the Node.js app deployment configuration
+                    sh "kubectl apply -f ${APP_YAML}"
+                }
             }
         }
     }
@@ -58,11 +49,9 @@ pipeline {
     post {
         always {
             script {
-               // Output deployment status
-                powershell '''
-                kubectl get pods
-                kubectl get services
-                '''
+                // Output deployment status
+                sh "kubectl get pods"
+                sh "kubectl get services"
             }
         }
     }
