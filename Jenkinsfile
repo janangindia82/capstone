@@ -8,12 +8,20 @@ pipeline {
     }
 
     stages {
+        stage('Setup Minikube Docker Environment') {
+            steps {
+                script {
+                    // Set up the Minikube Docker environment
+                    sh 'eval $(minikube docker-env)' // Using single quotes avoids interpolation issues
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image
-                    sh "eval \$(minikube docker-env) && docker build -t \${DOCKER_IMAGE}:latest ."
-
+                    // Build the Docker image for the Node.js app
+                    sh "eval \$(minikube docker-env) && docker build -t ${DOCKER_IMAGE}:latest ."
                 }
             }
         }
@@ -30,8 +38,7 @@ pipeline {
         stage('Deploy Node.js App on Minikube') {
             steps {
                 script {
-                    // Load Docker image to Minikube and apply deployment config
-                    sh "eval $(minikube docker-env) && docker build -t ${DOCKER_IMAGE}:latest ."
+                    // Apply the Node.js app deployment configuration
                     sh "kubectl apply -f ${APP_YAML}"
                 }
             }
