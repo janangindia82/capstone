@@ -1,57 +1,46 @@
 pipeline {
-    agent any
-
+    agent any 
     environment {
-        DOCKER_IMAGE = "node-app"
-        MYSQL_YAML = "mysql-deployment.yml"
-        APP_YAML = "app-deployment.yml"
+    DOCKERHUB_CREDENTIALS = credentials('jenkins_login')
     }
-
-    stages {
-        stage('Setup Minikube Docker Environment') {
-            steps {
-                script {
-                    // Set up the Minikube Docker environment
-                    sh "minikube docker-env --shell powershell | Invoke-Expression"
-                }
+    stages { 
+        stage('SCM Checkout') {
+            steps{
+            git 'https://github.com/janangindia82/devops.git'
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    // Build the Docker image for the Node.js app
-                    sh "docker build -t ${DOCKER_IMAGE}:latest ."
-                }
+        stage('Build docker image') {
+            steps {  
+                sh 'docker build -t janangindia82/nodeapp:$BUILD_NUMBER -f Dockerfile .'
             }
         }
-
-        stage('Deploy MySQL on Minikube') {
-            steps {
-                script {
-                    // Apply MySQL deployment configuration
-                    sh "kubectl apply -f ${MYSQL_YAML}"
-                }
+        stage('login to dockerhub') {
+            steps{
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
             }
         }
-
-        stage('Deploy Node.js App on Minikube') {
-            steps {
-                script {
-                    // Apply the Node.js app deployment configuration
-                    sh "kubectl apply -f ${APP_YAML}"
-                }
+        stage('push image') {
+            steps{
+                sh 'docker push janangindia82/nodeapp:$BUILD_NUMBER'
             }
         }
-    }
-
-    post {
+        stage('Deploy Node.js') {
+            steps {
+                sh 'kubectl apply -f nodejs-deployment.yaml'
+                sh 'kubectl apply -f nodejs-service.yaml'
+            }
+        }
+        stage('Deploy MYSQL') {
+            steps {
+                sh 'kubectl apply -f mysql-deployment.yaml'
+                sh 'kubectl apply -f mysql-service.yaml'
+            }
+        }
+}
+post {
         always {
-            script {
-                // Output deployment status
-                sh "kubectl get pods"
-                sh "kubectl get services"
-            }
+            sh 'docker logout'
         }
     }
 }
