@@ -11,10 +11,10 @@ pipeline {
     stages {
         stage('Setup Minikube Docker Environment') {
             steps {
-                powershell ...
+                powershell '''
                 # setup Minikube Docker environment
                 & minikube docker-env --shell powershell | Invoke-Expression
-                ...
+                '''
                 
         }
 
