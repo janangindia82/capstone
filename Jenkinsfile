@@ -12,14 +12,18 @@ pipeline {
         stage('Setup Minikube Docker Environment') {
             steps {
                 script {
-                    def dockerEnv = sh(script: 'minikube docker-env --shell powershell', returnStdout: true)
+                    // Obtain Docker environment variables for Minikube
+                    def dockerEnv = sh(script: 'minikube docker-env --shell bash', returnStdout: true)
                     def envVars = dockerEnv.split('\n')
                     envVars.each { var ->
                         if (var.startsWith('export')) {
-                            def keyValue = var.split('=')
-                            env[keyValue[0].replace('export ', '').trim()] = keyValue[1].trim()
+                            def keyValue = var.replace('export ', '').split('=')
+                            env[keyValue[0].trim()] = keyValue[1].trim().replace('"', '')
                         }
+                    }
+                }
             }
+        }
 
         stage('Build Docker Image') {
             steps {
@@ -48,9 +52,7 @@ pipeline {
             }
         }
     }
-            }
-        }
-    }
+
     post {
         always {
             script {
