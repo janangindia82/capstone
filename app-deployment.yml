@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: node-app
-          image: node-app:latest
+          image: janangindia82/node-app:latest
           env:
             - name: DB_HOST
               value: "mysql"
