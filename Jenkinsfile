@@ -10,7 +10,7 @@ pipeline {
         stage('Setup Minikube Docker Environment') {
             steps {
                 script {
-                    sh './setup-docker-env.sh'
+                    sh 'kubectl get services'
                 }
             }
         }
