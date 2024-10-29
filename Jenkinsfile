@@ -34,7 +34,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image for the Node.js app
-                    sh 'eval $(minikube docker-env)'
+                    sh 'eval $(minikube docker-env --shell=powershell)'
                     sh "docker build -t ${DOCKER_IMAGE}:latest ."
                 }
             }
