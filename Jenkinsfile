@@ -9,18 +9,12 @@ pipeline {
     }
 
     stages {
+        
         stage('Setup Minikube Docker Environment') {
             steps {
                 script {
-                    // Obtain Docker environment variables for Minikube
-                    def dockerEnv = sh(script: 'minikube docker-env --shell bash', returnStdout: true)
-                    def envVars = dockerEnv.split('\n')
-                    envVars.each { var ->
-                        if (var.startsWith('export')) {
-                            def keyValue = var.replace('export ', '').split('=')
-                            env[keyValue[0].trim()] = keyValue[1].trim().replace('"', '')
-                        }
-                    }
+                    //checking empty pods
+                    sh "kubectl get pods"
                 }
             }
         }
