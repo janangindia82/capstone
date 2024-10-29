@@ -12,7 +12,7 @@ pipeline {
         stage('Setup Minikube Docker Environment') {
             steps {
                 script {
-                    def dockerEnv = sh(script: 'minikube docker-env', returnStdout: true)
+                    def dockerEnv = sh(script: 'minikube docker-env --shell powershell', returnStdout: true)
                     def envVars = dockerEnv.split('\n')
                     envVars.each { var ->
                         if (var.startsWith('export')) {
