@@ -14,8 +14,7 @@ pipeline {
                 script {
                     // Checking for any running pods
                     sh "kubectl get pods"
-                    sh "eval $(minikube docker-env)
-"
+                    
                 }
             }
         }
@@ -35,6 +34,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image for the Node.js app
+                    sh 'eval $(minikube docker-env)'
                     sh "docker build -t ${DOCKER_IMAGE}:latest ."
                 }
             }
