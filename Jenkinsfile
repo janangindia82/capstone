@@ -14,6 +14,8 @@ pipeline {
                 script {
                     // Checking for any running pods
                     sh "kubectl get pods"
+                    sh "eval $(minikube docker-env)
+"
                 }
             }
         }
