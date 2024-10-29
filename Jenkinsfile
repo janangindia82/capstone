@@ -9,11 +9,10 @@ pipeline {
     }
 
     stages {
-        
         stage('Setup Minikube Docker Environment') {
             steps {
                 script {
-                    //checking empty pods
+                    // Checking for any running pods
                     sh "kubectl get pods"
                 }
             }
@@ -22,9 +21,10 @@ pipeline {
         stage('Login to Docker') {
             steps {
                 script {
-                    //login to Docker using stored creds
+                    // Login to Docker using stored credentials
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                    sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+                        sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+                    }
                 }
             }
         }
@@ -66,5 +66,4 @@ pipeline {
             }
         }
     }
-}
 }
