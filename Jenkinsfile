@@ -19,6 +19,16 @@ pipeline {
             }
         }
 
+        stage('Login to Docker') {
+            steps {
+                script {
+                    //login to Docker using stored creds
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
