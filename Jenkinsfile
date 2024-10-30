@@ -48,6 +48,7 @@ pipeline {
                      recipientProviders: [[$class: 'DevelopersRecipientProvider'], 
                                           [$class: 'RequesterRecipientProvider']], 
                      subject: 'Capstone Project'
+                     to: 'janangindia82@gmail.com'
         }
     }
 }
