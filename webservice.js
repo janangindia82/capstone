@@ -1,59 +1,48 @@
-import express from "express";
-import mysql from "mysql2";
-//var express = require('express')
-//var bodyParser=require('body-parser')
-//var app=express()
+import express from 'express';
+import bodyParser from 'body-parser';
+import mysql from 'mysql2';
+
 const app = express();
-//app.use(bodyParser());
+app.use(bodyParser.json());
 
-//var mysql2 = require('mysql2')
-
-//var con=mysql.createConnection({host:'localhost',port:3306,
-//user:'root',password:'Namashiva@82',database:'demo'})
-
-const con = mysql.createConnection({
-    host: process.env.DB_HOST || 'mysql', // Default to 'mysql' if DB_HOST is not set
+const pool = mysql.createPool({
+    host: process.env.DB_HOST || 'mysql',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || 'root',
     database: process.env.DB_NAME || 'demo',
-    port: 3306, // Optional if MySQL is already on port 3306
-  });
-
-app.get("/",function(request,response){
-    var mydate=new Date();
-    con.connect(function(err){
-        if (err) throw err
-        console.log("data base connected ...")
-        
-    
-        const sql="select * from employee"
-        con.query(sql,function(err,result){
-            if (err) throw err
-            response.send(result)
-        })
-    
-    con.end()    
-    })
-    
-});
-app.get("/hello",function(request,response){
-    var mydate=new Date();
-    response.send("hello world...."+mydate.toDateString())
+    port: 3306,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-app.post("/hi",function(request,response){
-    var data=request.body;
-    response.send(data)
-})
+app.get("/", function(request, response) {
+    const sql = "SELECT * FROM employee";
+    pool.query(sql, function(err, result) {
+        if (err) throw err;
+        response.send(result);
+    });
+});
 
-app.put("/update",function(request,response){
-  
-    response.send("hello world...using PUT")
-})
+app.get("/hello", function(request, response) {
+    const mydate = new Date();
+    response.send("hello world...." + mydate.toDateString());
+});
 
-app.delete("/remove",function(request,response){
-  
-    response.send("hello world...using DELETE")
-})
+app.post("/hi", function(request, response) {
+    const data = request.body;
+    response.send(data);
+});
 
-app.listen(8787);
+app.put("/update", function(request, response) {
+    response.send("hello world...using PUT");
+});
+
+app.delete("/remove", function(request, response) {
+    response.send("hello world...using DELETE");
+});
+
+const port = 8787;
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
