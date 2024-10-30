@@ -44,6 +44,10 @@ pipeline {
                 sh 'kubectl get pods'
                 sh 'kubectl get services'
             }
+            emailext body: 'Piple line Job Completed Sucessfully', 
+                     recipientProviders: [[$class: 'DevelopersRecipientProvider'], 
+                                          [$class: 'RequesterRecipientProvider']], 
+                     subject: 'Capstone Project'
         }
     }
 }
