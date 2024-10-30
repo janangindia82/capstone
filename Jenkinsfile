@@ -47,7 +47,7 @@ pipeline {
             emailext body: 'Piple line Job Completed Sucessfully', 
                      recipientProviders: [[$class: 'DevelopersRecipientProvider'], 
                                           [$class: 'RequesterRecipientProvider']], 
-                     subject: 'Capstone Project'
+                     subject: 'Capstone Project',
                      to: 'janangindia82@gmail.com'
         }
     }
